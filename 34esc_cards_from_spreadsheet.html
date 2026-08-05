@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="34 Express Sports Cards inventory lookup">
+  <title>34 Express Sports Cards | Card Lookup</title>
+
+  <style>
+    :root {
+      --navy: #0b1f3a;
+      --blue: #1f5fa9;
+      --light: #f4f7fb;
+      --border: #d9e1ea;
+      --text: #17202a;
+      --success: #167447;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--light);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    header {
+      background: var(--navy);
+      color: white;
+      padding: 18px 24px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+    }
+
+    header p {
+      margin: 8px 0 0;
+      opacity: 0.9;
+    }
+
+    main {
+      width: min(1100px, calc(100% - 24px));
+      margin: 24px auto;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 6px 18px rgba(11, 31, 58, 0.08);
+      padding: 22px;
+    }
+
+    .hidden { display: none !important; }
+
+    .card-detail {
+      max-width: 680px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .card-id {
+      display: inline-block;
+      margin-bottom: 18px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: #e8f0fb;
+      color: var(--blue);
+      font-weight: bold;
+      letter-spacing: 0.04em;
+    }
+
+    .card-description {
+      margin: 10px 0 24px;
+      font-size: clamp(1.35rem, 5vw, 2.25rem);
+      line-height: 1.25;
+    }
+
+    .price-label {
+      margin-bottom: 6px;
+      color: #52606d;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .price {
+      margin: 0;
+      color: var(--success);
+      font-size: clamp(2.3rem, 10vw, 4.2rem);
+      font-weight: 800;
+    }
+
+    .availability {
+      margin-top: 18px;
+      font-weight: bold;
+      color: var(--success);
+    }
+
+    .lookup-form {
+      display: flex;
+      gap: 10px;
+      max-width: 540px;
+      margin: 26px auto 0;
+    }
+
+    input, button {
+      min-height: 44px;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid #b8c4d1;
+      padding: 10px 12px;
+    }
+
+    button {
+      border: 0;
+      background: var(--blue);
+      color: white;
+      padding: 10px 18px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .error {
+      color: #b42318;
+      font-weight: bold;
+    }
+
+    .inventory-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .inventory-header h2 { margin: 0; }
+    .inventory-search { width: min(100%, 380px); }
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 12px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #edf3fa;
+      color: var(--navy);
+      position: sticky;
+      top: 0;
+    }
+
+    td.price-cell {
+      white-space: nowrap;
+      font-weight: bold;
+    }
+
+    a { color: var(--blue); }
+
+    .instructions {
+      margin-top: 18px;
+      padding: 14px;
+      background: #f7f9fc;
+      border-left: 4px solid var(--blue);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        width: min(100% - 16px, 1100px);
+        margin: 12px auto;
+      }
+
+      .panel { padding: 18px 14px; }
+      .lookup-form { flex-direction: column; }
+      button { width: 100%; }
+    }
+
+    @media print {
+      body { background: white; }
+
+      header,
+      .lookup-form,
+      .instructions,
+      .inventory-search {
+        display: none !important;
+      }
+
+      main {
+        width: 100%;
+        margin: 0;
+      }
+
+      .panel {
+        box-shadow: none;
+        border: 0;
+        padding: 0;
+      }
+
+      tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      thead { display: table-header-group; }
+      table { font-size: 10pt; }
+      th, td { padding: 7px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>34 Express Sports Cards</h1>
+    <p>Scan or enter a card ID to view current card information.</p>
+  </header>
+
+  <main>
+    <section id="detailView" class="panel card-detail hidden">
+      <div id="detailContent"></div>
+
+      <form id="lookupForm" class="lookup-form">
+        <input
+          id="lookupInput"
+          type="text"
+          placeholder="Enter card ID, for example CARD-0001"
+          aria-label="Card ID"
+        >
+        <button type="submit">Look Up</button>
+      </form>
+    </section>
+
+    <section id="inventoryView" class="panel hidden">
+      <div class="inventory-header">
+        <h2>Card Inventory</h2>
+        <input
+          id="inventorySearch"
+          class="inventory-search"
+          type="search"
+          placeholder="Search ID, description, or price"
+          aria-label="Search inventory"
+        >
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Unique ID</th>
+              <th>Card Description</th>
+              <th>Price</th>
+              <th>Card Link</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryBody"></tbody>
+        </table>
+      </div>
+
+      <div class="instructions">
+        <strong>QR code format:</strong>
+        Use URLs such as
+        <code>https://34esc.com/cards.html?id=CARD-0001</code>.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const cards = [
+  {
+    "id": "CARD-0001",
+    "description": "Aaron Judge - 2018 Topps Heritage #25",
+    "price": 125.0
+  },
+  {
+    "id": "CARD-0002",
+    "description": "Bo Nix - 2024 Panini Select #30",
+    "price": 2.0
+  },
+  {
+    "id": "CARD-0003",
+    "description": "Bryce Eldridge - 2024 Bowman Chrome Shimer /25 #BCP-134",
+    "price": 25.0
+  },
+  {
+    "id": "CARD-0004",
+    "description": "Caleb Williams - 2024 Panini Select Premier Level Silver Prizm #114",
+    "price": 5.64
+  },
+  {
+    "id": "CARD-0005",
+    "description": "Caleb Williams - 2024 Select #25",
+    "price": 80.0
+  },
+  {
+    "id": "CARD-0006",
+    "description": "Carl Yastrzemski - 2024 Topps Gilded Gold Mini Diamond /50 #90",
+    "price": 100.0
+  },
+  {
+    "id": "CARD-0007",
+    "description": "Drake Maye - 2024 Mosaic Green #273",
+    "price": 8.0
+  },
+  {
+    "id": "CARD-0008",
+    "description": "Drake Maye - 2024 Panini Donruss Optic My House! #8",
+    "price": 9.9
+  },
+  {
+    "id": "CARD-0009",
+    "description": "Drake Maye - 2024 Panini Donruss Retro 1994 #23",
+    "price": 5.43
+  },
+  {
+    "id": "CARD-0010",
+    "description": "Drake Maye - 2024 Panini Donruss Retro 1994 #23",
+    "price": 6.09
+  },
+  {
+    "id": "CARD-0011",
+    "description": "Drake Maye - 2024 Panini Donruss Retro 1994 #23",
+    "price": 6.18
+  },
+  {
+    "id": "CARD-0012",
+    "description": "Drake Maye - 2024 Panini Donruss The Rookies #TR-39",
+    "price": 19.47
+  },
+  {
+    "id": "CARD-0013",
+    "description": "Drake Maye - 2024 Panini Select Turbocharged #24",
+    "price": 7.16
+  },
+  {
+    "id": "CARD-0014",
+    "description": "Drake Maye - 2025 Panini Rookies & Stars #32",
+    "price": 2.0
+  },
+  {
+    "id": "CARD-0015",
+    "description": "Hank Aaron - 1960 Topps",
+    "price": 150.0
+  },
+  {
+    "id": "CARD-0016",
+    "description": "Harmon Killebrew - 1972 Topps",
+    "price": 25.0
+  },
+  {
+    "id": "CARD-0017",
+    "description": "Hurston Waldrep - 2025 Leaf Metal Caught Looking Auto 1/1 #CLHW1",
+    "price": 45.0
+  },
+  {
+    "id": "CARD-0018",
+    "description": "Jaxson Dart - 2025 Panini Mosaic #288",
+    "price": 11.1
+  },
+  {
+    "id": "CARD-0019",
+    "description": "Jeff Bagwell - 2025 Topps Tribute Pillars of the Game Auto /199",
+    "price": 40.0
+  },
+  {
+    "id": "CARD-0020",
+    "description": "Jordan Love - 2020 Panini Mosaic Green",
+    "price": 65.0
+  },
+  {
+    "id": "CARD-0021",
+    "description": "Josh Jung - 2019 Bowman's best Auto Refractor",
+    "price": 60.72
+  },
+  {
+    "id": "CARD-0022",
+    "description": "Josh Jung - 2023 Topps Finest Auto Gold /50",
+    "price": 127.49
+  },
+  {
+    "id": "CARD-0023",
+    "description": "Josh Jung - 2024 Topps HR Challenge #HRCW-26",
+    "price": 20.0
+  },
+  {
+    "id": "CARD-0024",
+    "description": "Jung Hoo Lee - 2025 Topps Finest Auto Purple Refractor",
+    "price": 10.0
+  },
+  {
+    "id": "CARD-0025",
+    "description": "Kevin McGonigle - 2025 Bowman Chrome Prospects #BCP-79",
+    "price": 208.7
+  },
+  {
+    "id": "CARD-0026",
+    "description": "Luka Doncic - 2018 Panini Donruss #177",
+    "price": 50.0
+  },
+  {
+    "id": "CARD-0027",
+    "description": "Luka Doncic - 2018 Panini Donruss #177",
+    "price": 50.0
+  },
+  {
+    "id": "CARD-0028",
+    "description": "Luka Doncic - 2018 Panini Donruss #177",
+    "price": 50.0
+  },
+  {
+    "id": "CARD-0029",
+    "description": "Michael Oliveto - 2025 Bowman Draft Auto True Blue /150 #CPA-MO",
+    "price": 50.0
+  },
+  {
+    "id": "CARD-0030",
+    "description": "Nolan Ryan - 2023 Topps Luminaries Masters Mound Auto /15",
+    "price": 570.0
+  },
+  {
+    "id": "CARD-0031",
+    "description": "Paulino Santana - 2024 Bowman Chrome Orange Refractor Auto /25",
+    "price": 25.0
+  },
+  {
+    "id": "CARD-0032",
+    "description": "Ripken Reyes - 2021 Bowman Prospects Auto #PAPR-RR",
+    "price": 15.0
+  },
+  {
+    "id": "CARD-0033",
+    "description": "Ronald Acuna - 2018 Panini Cyber Monday Rapture /25",
+    "price": 100.0
+  },
+  {
+    "id": "CARD-0034",
+    "description": "Samuel Basallo - 2024 Bowman Sterling Auto #PA-SB",
+    "price": 38.14
+  },
+  {
+    "id": "CARD-0035",
+    "description": "Sebastian Walcott - 2024 Bowman Sterling",
+    "price": 150.0
+  },
+  {
+    "id": "CARD-0036",
+    "description": "Shohei Ohtani - 2018 Bowman #49",
+    "price": 60.0
+  },
+  {
+    "id": "CARD-0037",
+    "description": "Shohei Ohtani - 2018 Topps 1983 Topps #83-1",
+    "price": 125.0
+  },
+  {
+    "id": "CARD-0038",
+    "description": "Shohei Ohtani - 2018 Topps Chrome Pitching #150",
+    "price": 256.0
+  },
+  {
+    "id": "CARD-0039",
+    "description": "Shohei Ohtani - 2018 Topps Chrome Pitching Refractor #150",
+    "price": 256.0
+  },
+  {
+    "id": "CARD-0040",
+    "description": "Shohei Ohtani - 2018 Topps Gallery Wood #116",
+    "price": 150.0
+  },
+  {
+    "id": "CARD-0041",
+    "description": "Shohei Ohtani - 2018 Topps Update 1983 Topps #83-2",
+    "price": 90.0
+  },
+  {
+    "id": "CARD-0042",
+    "description": "Tom Brady - 2000 Bowman Chrome #236",
+    "price": 5200.0
+  },
+  {
+    "id": "CARD-0043",
+    "description": "Trevor Lawrence - 2021 Phoenix Fire Burst",
+    "price": 28.04
+  },
+  {
+    "id": "CARD-0044",
+    "description": "Wyatt Langford - 2023 Bowman Chrome Draft #BDC106",
+    "price": 42.69
+  },
+  {
+    "id": "CARD-0045",
+    "description": "Wyatt Langford - 2023 Bowman Draft Chrome Auto Blue Wave /150",
+    "price": 680.97
+  },
+  {
+    "id": "CARD-0046",
+    "description": "Wyatt Langford - 2024 Topps Finest Auto Orange /25",
+    "price": 550.0
+  },
+  {
+    "id": "CARD-0047",
+    "description": "Yoshinobu Yamamoto - 2024 Bowman Base #36",
+    "price": 3.72
+  },
+  {
+    "id": "CARD-0048",
+    "description": "Shohei Ohtani - 2018 Bowman High Tek Ocean Blue Tidal",
+    "price": 5974.0
+  },
+  {
+    "id": "CARD-0049",
+    "description": "Luka Doncic - 2018 Panini Donruss Optic the Rookies",
+    "price": 104.16
+  },
+  {
+    "id": "CARD-0050",
+    "description": "Jac Caglianone - 2025 Topps Now Call Up",
+    "price": 25.0
+  },
+  {
+    "id": "CARD-0051",
+    "description": "Drake Maye - 2024 Prizm Emergent Green Ice",
+    "price": 95.0
+  },
+  {
+    "id": "CARD-0052",
+    "description": "Drake Maye - 2024 Donruss The Rookies",
+    "price": 70.0
+  },
+  {
+    "id": "CARD-0053",
+    "description": "Shohei Ohtani - 2018 Topps Fire Flamethrowers Gold Minted",
+    "price": 1500.0
+  }
+];
+
+    const detailView = document.getElementById("detailView");
+    const inventoryView = document.getElementById("inventoryView");
+    const detailContent = document.getElementById("detailContent");
+    const inventoryBody = document.getElementById("inventoryBody");
+    const inventorySearch = document.getElementById("inventorySearch");
+    const lookupForm = document.getElementById("lookupForm");
+    const lookupInput = document.getElementById("lookupInput");
+
+    const cardMap = new Map(
+      cards.map(card => [String(card.id).trim().toUpperCase(), card])
+    );
+
+    function formatPrice(price) {
+      const number = Number(price);
+      return Number.isFinite(number)
+        ? number.toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD"
+          })
+        : price;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function normalizeId(value) {
+      return String(value || "").trim().toUpperCase();
+    }
+
+    function showCard(cardId) {
+      detailView.classList.remove("hidden");
+      inventoryView.classList.add("hidden");
+
+      const normalizedId = normalizeId(cardId);
+      const card = cardMap.get(normalizedId);
+
+      if (!card) {
+        detailContent.innerHTML = `
+          <p class="error">Card ID ${escapeHtml(normalizedId)} was not found.</p>
+          <p>Please check the ID and try again.</p>
+        `;
+        lookupInput.value = normalizedId;
+        return;
+      }
+
+      document.title = `${card.description} | 34 Express Sports Cards`;
+
+      detailContent.innerHTML = `
+        <div class="card-id">Card ID: ${escapeHtml(card.id)}</div>
+        <h2 class="card-description">${escapeHtml(card.description)}</h2>
+        <div class="price-label">Current Price</div>
+        <p class="price">${formatPrice(card.price)}</p>
+        <p class="availability">Available</p>
+      `;
+
+      lookupInput.value = normalizedId;
+    }
+
+    function buildInventory(filteredCards = cards) {
+      inventoryBody.innerHTML = filteredCards.map(card => {
+        const cardUrl =
+          `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(card.id)}`;
+
+        return `
+          <tr>
+            <td>${escapeHtml(card.id)}</td>
+            <td>${escapeHtml(card.description)}</td>
+            <td class="price-cell">${formatPrice(card.price)}</td>
+            <td><a href="${cardUrl}">View card</a></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function showInventory() {
+      detailView.classList.add("hidden");
+      inventoryView.classList.remove("hidden");
+      buildInventory();
+    }
+
+    lookupForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const id = normalizeId(lookupInput.value);
+      if (!id) return;
+
+      const newUrl =
+        `${window.location.pathname}?id=${encodeURIComponent(id)}`;
+
+      window.history.pushState({}, "", newUrl);
+      showCard(id);
+    });
+
+    inventorySearch.addEventListener("input", () => {
+      const term = inventorySearch.value.trim().toLowerCase();
+
+      const filtered = cards.filter(card =>
+        card.id.toLowerCase().includes(term) ||
+        card.description.toLowerCase().includes(term) ||
+        String(card.price).toLowerCase().includes(term)
+      );
+
+      buildInventory(filtered);
+    });
+
+    window.addEventListener("popstate", () => {
+      const id = new URLSearchParams(window.location.search).get("id");
+      id ? showCard(id) : showInventory();
+    });
+
+    const requestedId = new URLSearchParams(window.location.search).get("id");
+    requestedId ? showCard(requestedId) : showInventory();
+  </script>
+</body>
+</html>
