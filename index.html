@@ -3,225 +3,268 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="34 Express Sports Cards inventory lookup">
+  <meta name="description" content="34 Express Sports Cards card lookup">
   <title>34 Express Sports Cards | Card Lookup</title>
-
   <style>
     :root {
-      --navy: #0b1f3a;
-      --blue: #1f5fa9;
-      --light: #f4f7fb;
-      --border: #d9e1ea;
-      --text: #17202a;
-      --success: #167447;
+      --navy:#0b1f3a;
+      --blue:#1f5fa9;
+      --light:#f4f7fb;
+      --border:#d9e1ea;
+      --text:#17202a;
+      --muted:#667085;
+      --green:#167447;
     }
 
-    * { box-sizing: border-box; }
+    * { box-sizing:border-box; }
 
     body {
-      margin: 0;
-      background: var(--light);
-      color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:var(--light);
+      color:var(--text);
     }
 
     header {
-      background: var(--navy);
-      color: white;
-      padding: 18px 24px;
-      text-align: center;
+      background:var(--navy);
+      color:#fff;
+      text-align:center;
+      padding:20px 16px;
     }
 
     header h1 {
-      margin: 0;
-      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      margin:0;
+      font-size:clamp(1.5rem, 5vw, 2.3rem);
     }
 
     header p {
-      margin: 8px 0 0;
-      opacity: 0.9;
+      margin:8px 0 0;
+      opacity:.9;
     }
 
     main {
-      width: min(1100px, calc(100% - 24px));
-      margin: 24px auto;
+      width:min(1150px, calc(100% - 24px));
+      margin:24px auto;
     }
 
     .panel {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      box-shadow: 0 6px 18px rgba(11, 31, 58, 0.08);
-      padding: 22px;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:14px;
+      box-shadow:0 6px 18px rgba(11,31,58,.08);
+      padding:22px;
     }
 
-    .hidden { display: none !important; }
+    .hidden { display:none !important; }
 
     .card-detail {
-      max-width: 680px;
-      margin: 0 auto;
-      text-align: center;
+      max-width:760px;
+      margin:0 auto;
+    }
+
+    .card-heading {
+      text-align:center;
     }
 
     .card-id {
-      display: inline-block;
-      margin-bottom: 18px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: #e8f0fb;
-      color: var(--blue);
-      font-weight: bold;
-      letter-spacing: 0.04em;
+      display:inline-block;
+      background:#e8f0fb;
+      color:var(--blue);
+      font-weight:700;
+      padding:7px 12px;
+      border-radius:999px;
+      margin-bottom:18px;
     }
 
     .card-description {
-      margin: 10px 0 24px;
-      font-size: clamp(1.35rem, 5vw, 2.25rem);
-      line-height: 1.25;
+      font-size:clamp(1.4rem, 5vw, 2.25rem);
+      line-height:1.25;
+      margin:8px 0 24px;
     }
 
     .price-label {
-      margin-bottom: 6px;
-      color: #52606d;
-      font-size: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-size:.9rem;
+      text-align:center;
     }
 
     .price {
-      margin: 0;
-      color: var(--success);
-      font-size: clamp(2.3rem, 10vw, 4.2rem);
-      font-weight: 800;
+      color:var(--green);
+      font-size:clamp(2.4rem, 10vw, 4.2rem);
+      font-weight:800;
+      margin:5px 0 24px;
+      text-align:center;
     }
 
-    .availability {
-      margin-top: 18px;
-      font-weight: bold;
-      color: var(--success);
+    .details-grid {
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .detail-box {
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:14px;
+      background:#fafcff;
+    }
+
+    .detail-label {
+      color:var(--muted);
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-bottom:5px;
+    }
+
+    .detail-value {
+      font-size:1.05rem;
+      font-weight:700;
+      overflow-wrap:anywhere;
     }
 
     .lookup-form {
-      display: flex;
-      gap: 10px;
-      max-width: 540px;
-      margin: 26px auto 0;
+      display:flex;
+      gap:10px;
+      max-width:560px;
+      margin:28px auto 0;
     }
 
     input, button {
-      min-height: 44px;
-      border-radius: 8px;
-      font-size: 1rem;
+      min-height:44px;
+      border-radius:8px;
+      font-size:1rem;
     }
 
     input {
-      width: 100%;
-      border: 1px solid #b8c4d1;
-      padding: 10px 12px;
+      flex:1;
+      padding:10px 12px;
+      border:1px solid #b8c4d1;
     }
 
     button {
-      border: 0;
-      background: var(--blue);
-      color: white;
-      padding: 10px 18px;
-      cursor: pointer;
-      font-weight: bold;
+      border:0;
+      padding:10px 18px;
+      background:var(--blue);
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
     }
 
     .error {
-      color: #b42318;
-      font-weight: bold;
+      color:#b42318;
+      font-weight:700;
+      text-align:center;
     }
 
     .inventory-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
+      display:flex;
+      gap:14px;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-bottom:16px;
     }
 
-    .inventory-header h2 { margin: 0; }
-    .inventory-search { width: min(100%, 380px); }
-    .table-wrap { overflow-x: auto; }
+    .inventory-header h2 { margin:0; }
+
+    .inventory-search {
+      width:min(100%, 400px);
+    }
+
+    .table-wrap {
+      overflow-x:auto;
+    }
 
     table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
+      width:100%;
+      border-collapse:collapse;
+      font-size:.95rem;
     }
 
     th, td {
-      border-bottom: 1px solid var(--border);
-      padding: 12px 10px;
-      text-align: left;
-      vertical-align: top;
+      padding:10px 9px;
+      border-bottom:1px solid var(--border);
+      text-align:left;
+      vertical-align:top;
     }
 
     th {
-      background: #edf3fa;
-      color: var(--navy);
-      position: sticky;
-      top: 0;
+      background:#edf3fa;
+      color:var(--navy);
+      position:sticky;
+      top:0;
+      white-space:nowrap;
     }
 
     td.price-cell {
-      white-space: nowrap;
-      font-weight: bold;
+      white-space:nowrap;
+      font-weight:700;
     }
 
-    a { color: var(--blue); }
-
-    .instructions {
-      margin-top: 18px;
-      padding: 14px;
-      background: #f7f9fc;
-      border-left: 4px solid var(--blue);
-      line-height: 1.5;
+    td.grade-cell {
+      text-align:center;
+      font-weight:700;
     }
 
-    @media (max-width: 600px) {
+    a { color:var(--blue); }
+
+    @media (max-width:700px) {
       main {
-        width: min(100% - 16px, 1100px);
-        margin: 12px auto;
-      }
-
-      .panel { padding: 18px 14px; }
-      .lookup-form { flex-direction: column; }
-      button { width: 100%; }
-    }
-
-    @media print {
-      body { background: white; }
-
-      header,
-      .lookup-form,
-      .instructions,
-      .inventory-search {
-        display: none !important;
-      }
-
-      main {
-        width: 100%;
-        margin: 0;
+        width:min(100% - 16px, 1150px);
+        margin:12px auto;
       }
 
       .panel {
-        box-shadow: none;
-        border: 0;
-        padding: 0;
+        padding:18px 14px;
+      }
+
+      .details-grid {
+        grid-template-columns:1fr;
+      }
+
+      .lookup-form {
+        flex-direction:column;
+      }
+
+      button {
+        width:100%;
+      }
+    }
+
+    @media print {
+      header,
+      .lookup-form,
+      .inventory-search {
+        display:none !important;
+      }
+
+      body {
+        background:#fff;
+      }
+
+      main {
+        width:100%;
+        margin:0;
+      }
+
+      .panel {
+        box-shadow:none;
+        border:0;
+        padding:0;
       }
 
       tr {
-        break-inside: avoid;
-        page-break-inside: avoid;
+        break-inside:avoid;
+        page-break-inside:avoid;
       }
 
-      thead { display: table-header-group; }
-      table { font-size: 10pt; }
-      th, td { padding: 7px; }
+      thead {
+        display:table-header-group;
+      }
     }
   </style>
 </head>
@@ -229,7 +272,7 @@
 <body>
   <header>
     <h1>34 Express Sports Cards</h1>
-    <p>Scan or enter a card ID to view current card information.</p>
+    <p>Scan a QR code to view card details.</p>
   </header>
 
   <main>
@@ -237,46 +280,38 @@
       <div id="detailContent"></div>
 
       <form id="lookupForm" class="lookup-form">
-        <input
-          id="lookupInput"
-          type="text"
-          placeholder="Enter card ID, for example CARD-0001"
-          aria-label="Card ID"
-        >
+        <input id="lookupInput"
+               type="text"
+               placeholder="Enter card ID, e.g. CARD-0001"
+               aria-label="Card ID">
         <button type="submit">Look Up</button>
       </form>
     </section>
 
     <section id="inventoryView" class="panel hidden">
       <div class="inventory-header">
-        <h2>Card Inventory</h2>
-        <input
-          id="inventorySearch"
-          class="inventory-search"
-          type="search"
-          placeholder="Search ID, description, or price"
-          aria-label="Search inventory"
-        >
+        <h2>Card Inventory (69 cards)</h2>
+        <input id="inventorySearch"
+               class="inventory-search"
+               type="search"
+               placeholder="Search any card field">
       </div>
 
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Unique ID</th>
-              <th>Card Description</th>
+              <th>QR ID</th>
+              <th>Card</th>
               <th>Price</th>
-              <th>Card Link</th>
+              <th>Purchase Date</th>
+              <th>SKU</th>
+              <th>Grade</th>
+              <th>Link</th>
             </tr>
           </thead>
           <tbody id="inventoryBody"></tbody>
         </table>
-      </div>
-
-      <div class="instructions">
-        <strong>QR code format:</strong>
-        Use URLs such as
-        <code>https://34esc.com/cards.html?id=CARD-0001</code>.
       </div>
     </section>
   </main>
@@ -284,269 +319,556 @@
   <script>
     const cards = [
   {
-    "id": "CARD-0001",
-    "description": "Aaron Judge - 2018 Topps Heritage #25",
-    "price": 125.0
+    "QR_ID": "CARD-0001",
+    "Card": "Aaron Judge - 2017 Topps Chrome 1987 30th #87T-8",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-26",
+    "SKU": "100137.37",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0002",
-    "description": "Bo Nix - 2024 Panini Select #30",
-    "price": 2.0
+    "QR_ID": "CARD-0002",
+    "Card": "Aaron Judge - 2018 Topps Heritage #25",
+    "Price": 999.99,
+    "Purchase Date": "2026-06-20",
+    "SKU": "100125",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0003",
-    "description": "Bryce Eldridge - 2024 Bowman Chrome Shimer /25 #BCP-134",
-    "price": 25.0
+    "QR_ID": "CARD-0003",
+    "Card": "Aaron Judge - 2023 Topps Chrome Black Gold /50 #1",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-19",
+    "SKU": "100158.76",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0004",
-    "description": "Caleb Williams - 2024 Panini Select Premier Level Silver Prizm #114",
-    "price": 5.64
+    "QR_ID": "CARD-0004",
+    "Card": "Aaron Judge - 2024 Bowman Chrome Sapphire /50 #80",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-26",
+    "SKU": "100058.91",
+    "Grade": "9"
   },
   {
-    "id": "CARD-0005",
-    "description": "Caleb Williams - 2024 Select #25",
-    "price": 80.0
+    "QR_ID": "CARD-0005",
+    "Card": "Aaron Judge - 2026 Topps Silver Pack Chrome 1991 #91C-82",
+    "Price": 999.99,
+    "Purchase Date": "2026-03-05",
+    "SKU": "100029.91",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0006",
-    "description": "Carl Yastrzemski - 2024 Topps Gilded Gold Mini Diamond /50 #90",
-    "price": 100.0
+    "QR_ID": "CARD-0006",
+    "Card": "Bo Nix - 2024 Panini Select #30",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-02",
+    "SKU": "100034.02",
+    "Grade": "7"
   },
   {
-    "id": "CARD-0007",
-    "description": "Drake Maye - 2024 Mosaic Green #273",
-    "price": 8.0
+    "QR_ID": "CARD-0007",
+    "Card": "Bobby Witt Jr. - 2025 Topps Chrome Sapphire Selections /25 #SS-6",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-09",
+    "SKU": "100181.41",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0008",
-    "description": "Drake Maye - 2024 Panini Donruss Optic My House! #8",
-    "price": 9.9
+    "QR_ID": "CARD-0008",
+    "Card": "Bryce Eldridge - 2024 Bowman Chrome Shimer /25 #BCP-134",
+    "Price": 999.99,
+    "Purchase Date": "2026-01-25",
+    "SKU": "100049.26",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0009",
-    "description": "Drake Maye - 2024 Panini Donruss Retro 1994 #23",
-    "price": 5.43
+    "QR_ID": "CARD-0009",
+    "Card": "Caleb Williams - 2024 Panini Select Premier Level Silver Prizm #114",
+    "Price": 999.99,
+    "Purchase Date": "2026-01-25",
+    "SKU": "100029.9",
+    "Grade": "8"
   },
   {
-    "id": "CARD-0010",
-    "description": "Drake Maye - 2024 Panini Donruss Retro 1994 #23",
-    "price": 6.09
+    "QR_ID": "CARD-0010",
+    "Card": "Caleb Williams - 2024 Select #25",
+    "Price": 999.99,
+    "Purchase Date": "2026-06-26",
+    "SKU": "100080",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0011",
-    "description": "Drake Maye - 2024 Panini Donruss Retro 1994 #23",
-    "price": 6.18
+    "QR_ID": "CARD-0011",
+    "Card": "Carl Yastrzemski - 2024 Topps Gilded Gold Mini Diamond /50 #90",
+    "Price": 999.99,
+    "Purchase Date": "2026-05-04",
+    "SKU": "100100",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0012",
-    "description": "Drake Maye - 2024 Panini Donruss The Rookies #TR-39",
-    "price": 19.47
+    "QR_ID": "CARD-0012",
+    "Card": "Drake Maye - 2024 Donruss The Rookies",
+    "Price": 999.99,
+    "Purchase Date": "2026-07-24",
+    "SKU": "100070",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0013",
-    "description": "Drake Maye - 2024 Panini Select Turbocharged #24",
-    "price": 7.16
+    "QR_ID": "CARD-0013",
+    "Card": "Drake Maye - 2024 Mosaic Green #273",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-02",
+    "SKU": "100040.02",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0014",
-    "description": "Drake Maye - 2025 Panini Rookies & Stars #32",
-    "price": 2.0
+    "QR_ID": "CARD-0014",
+    "Card": "Drake Maye - 2024 Panini Donruss Optic My House! #8",
+    "Price": 999.99,
+    "Purchase Date": "2026-01-25",
+    "SKU": "100035.26",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0015",
-    "description": "Hank Aaron - 1960 Topps",
-    "price": 150.0
+    "QR_ID": "CARD-0015",
+    "Card": "Drake Maye - 2024 Panini Donruss Retro 1994 #23",
+    "Price": 999.99,
+    "Purchase Date": "2026-01-25",
+    "SKU": "100030.79",
+    "Grade": "9"
   },
   {
-    "id": "CARD-0016",
-    "description": "Harmon Killebrew - 1972 Topps",
-    "price": 25.0
+    "QR_ID": "CARD-0016",
+    "Card": "Drake Maye - 2024 Panini Donruss Retro 1994 #23",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-03",
+    "SKU": "100040.04",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0017",
-    "description": "Hurston Waldrep - 2025 Leaf Metal Caught Looking Auto 1/1 #CLHW1",
-    "price": 45.0
+    "QR_ID": "CARD-0017",
+    "Card": "Drake Maye - 2024 Panini Donruss Retro 1994 #23",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-03",
+    "SKU": "100038.2",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0018",
-    "description": "Jaxson Dart - 2025 Panini Mosaic #288",
-    "price": 11.1
+    "QR_ID": "CARD-0018",
+    "Card": "Drake Maye - 2024 Panini Donruss The Rookies #TR-39",
+    "Price": 999.99,
+    "Purchase Date": "2026-01-25",
+    "SKU": "100044.83",
+    "Grade": "9"
   },
   {
-    "id": "CARD-0019",
-    "description": "Jeff Bagwell - 2025 Topps Tribute Pillars of the Game Auto /199",
-    "price": 40.0
+    "QR_ID": "CARD-0019",
+    "Card": "Drake Maye - 2024 Panini Select Turbocharged #24",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-03",
+    "SKU": "100041.11",
+    "Grade": "9"
   },
   {
-    "id": "CARD-0020",
-    "description": "Jordan Love - 2020 Panini Mosaic Green",
-    "price": 65.0
+    "QR_ID": "CARD-0020",
+    "Card": "Drake Maye - 2024 Prizm Emergent Green Ice",
+    "Price": 999.99,
+    "Purchase Date": "2026-07-24",
+    "SKU": "100095",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0021",
-    "description": "Josh Jung - 2019 Bowman's best Auto Refractor",
-    "price": 60.72
+    "QR_ID": "CARD-0021",
+    "Card": "Drake Maye - 2025 Panini Rookies & Stars #32",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-03",
+    "SKU": "100028",
+    "Grade": "9"
   },
   {
-    "id": "CARD-0022",
-    "description": "Josh Jung - 2023 Topps Finest Auto Gold /50",
-    "price": 127.49
+    "QR_ID": "CARD-0022",
+    "Card": "Hank Aaron - 1960 Topps",
+    "Price": 999.99,
+    "Purchase Date": "2026-03-18",
+    "SKU": "100150",
+    "Grade": "3"
   },
   {
-    "id": "CARD-0023",
-    "description": "Josh Jung - 2024 Topps HR Challenge #HRCW-26",
-    "price": 20.0
+    "QR_ID": "CARD-0023",
+    "Card": "Harmon Killebrew - 1972 Topps",
+    "Price": 999.99,
+    "Purchase Date": "2025-11-06",
+    "SKU": "100025",
+    "Grade": "6"
   },
   {
-    "id": "CARD-0024",
-    "description": "Jung Hoo Lee - 2025 Topps Finest Auto Purple Refractor",
-    "price": 10.0
+    "QR_ID": "CARD-0024",
+    "Card": "Hurston Waldrep - 2025 Leaf Metal Caught Looking Auto 1/1 #CLHW1",
+    "Price": 999.99,
+    "Purchase Date": "2026-01-30",
+    "SKU": "100078.95",
+    "Grade": "9"
   },
   {
-    "id": "CARD-0025",
-    "description": "Kevin McGonigle - 2025 Bowman Chrome Prospects #BCP-79",
-    "price": 208.7
+    "QR_ID": "CARD-0025",
+    "Card": "Jac Caglianone - 2025 Topps Now Call Up",
+    "Price": 999.99,
+    "Purchase Date": "2026-07-24",
+    "SKU": "100025",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0026",
-    "description": "Luka Doncic - 2018 Panini Donruss #177",
-    "price": 50.0
+    "QR_ID": "CARD-0026",
+    "Card": "Jaxson Dart - 2025 Panini Mosaic #288",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-05",
+    "SKU": "100045.05",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0027",
-    "description": "Luka Doncic - 2018 Panini Donruss #177",
-    "price": 50.0
+    "QR_ID": "CARD-0027",
+    "Card": "Jeff Bagwell - 2025 Topps Tribute Pillars of the Game Auto /199",
+    "Price": 999.99,
+    "Purchase Date": "2025-08-07",
+    "SKU": "100078.99",
+    "Grade": "9"
   },
   {
-    "id": "CARD-0028",
-    "description": "Luka Doncic - 2018 Panini Donruss #177",
-    "price": 50.0
+    "QR_ID": "CARD-0028",
+    "Card": "Jordan Love - 2020 Panini Mosaic Green",
+    "Price": 999.99,
+    "Purchase Date": "2026-06-20",
+    "SKU": "100065",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0029",
-    "description": "Michael Oliveto - 2025 Bowman Draft Auto True Blue /150 #CPA-MO",
-    "price": 50.0
+    "QR_ID": "CARD-0029",
+    "Card": "Josh Allen - 2018 Panini Prizm Red White Blue #205",
+    "Price": 999.99,
+    "Purchase Date": "2026-08-03",
+    "SKU": "101400",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0030",
-    "description": "Nolan Ryan - 2023 Topps Luminaries Masters Mound Auto /15",
-    "price": 570.0
+    "QR_ID": "CARD-0030",
+    "Card": "Josh Jung - 2019 Bowman's best Auto Refractor",
+    "Price": 999.99,
+    "Purchase Date": "2026-05-22",
+    "SKU": "100060.72",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0031",
-    "description": "Paulino Santana - 2024 Bowman Chrome Orange Refractor Auto /25",
-    "price": 25.0
+    "QR_ID": "CARD-0031",
+    "Card": "Josh Jung - 2023 Topps Finest Auto Gold /50",
+    "Price": 999.99,
+    "Purchase Date": "2026-05-22",
+    "SKU": "100127.49",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0032",
-    "description": "Ripken Reyes - 2021 Bowman Prospects Auto #PAPR-RR",
-    "price": 15.0
+    "QR_ID": "CARD-0032",
+    "Card": "Josh Jung - 2024 Topps HR Challenge #HRCW-26",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-17",
+    "SKU": "100020",
+    "Grade": "9"
   },
   {
-    "id": "CARD-0033",
-    "description": "Ronald Acuna - 2018 Panini Cyber Monday Rapture /25",
-    "price": 100.0
+    "QR_ID": "CARD-0033",
+    "Card": "Jung Hoo Lee - 2025 Topps Finest Auto Purple Refractor",
+    "Price": 999.99,
+    "Purchase Date": "2025-12-25",
+    "SKU": "100048.99",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0034",
-    "description": "Samuel Basallo - 2024 Bowman Sterling Auto #PA-SB",
-    "price": 38.14
+    "QR_ID": "CARD-0034",
+    "Card": "Kevin McGonigle - 2025 Bowman Chrome Prospects #BCP-79",
+    "Price": 999.99,
+    "Purchase Date": "2026-04-10",
+    "SKU": "100208.7",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0035",
-    "description": "Sebastian Walcott - 2024 Bowman Sterling",
-    "price": 150.0
+    "QR_ID": "CARD-0035",
+    "Card": "Kobe Bryant - 1997 Topps #171",
+    "Price": 999.99,
+    "Purchase Date": "2026-08-03",
+    "SKU": "100321.05",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0036",
-    "description": "Shohei Ohtani - 2018 Bowman #49",
-    "price": 60.0
+    "QR_ID": "CARD-0036",
+    "Card": "Kon Knueppel - 2025-26 Topps Generation Now #GN-4",
+    "Price": 999.99,
+    "Purchase Date": "2026-03-05",
+    "SKU": "100029.91",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0037",
-    "description": "Shohei Ohtani - 2018 Topps 1983 Topps #83-1",
-    "price": 125.0
+    "QR_ID": "CARD-0037",
+    "Card": "Luka Doncic - 2018 Panini Donruss #177",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-03",
+    "SKU": "100083.95",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0038",
-    "description": "Shohei Ohtani - 2018 Topps Chrome Pitching #150",
-    "price": 256.0
+    "QR_ID": "CARD-0038",
+    "Card": "Luka Doncic - 2018 Panini Donruss #177",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-03",
+    "SKU": "100082.02",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0039",
-    "description": "Shohei Ohtani - 2018 Topps Chrome Pitching Refractor #150",
-    "price": 256.0
+    "QR_ID": "CARD-0039",
+    "Card": "Luka Doncic - 2018 Panini Donruss #177",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-03",
+    "SKU": "100082.02",
+    "Grade": "9"
   },
   {
-    "id": "CARD-0040",
-    "description": "Shohei Ohtani - 2018 Topps Gallery Wood #116",
-    "price": 150.0
+    "QR_ID": "CARD-0040",
+    "Card": "Michael Oliveto - 2025 Bowman Draft Auto True Blue /150 #CPA-MO",
+    "Price": 999.99,
+    "Purchase Date": "2026-01-25",
+    "SKU": "100075.36",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0041",
-    "description": "Shohei Ohtani - 2018 Topps Update 1983 Topps #83-2",
-    "price": 90.0
+    "QR_ID": "CARD-0041",
+    "Card": "Mickey Mantle - 1958 Topps All Star #487",
+    "Price": 999.99,
+    "Purchase Date": "2026-08-03",
+    "SKU": "100218.24",
+    "Grade": "4"
   },
   {
-    "id": "CARD-0042",
-    "description": "Tom Brady - 2000 Bowman Chrome #236",
-    "price": 5200.0
+    "QR_ID": "CARD-0042",
+    "Card": "Mickey Mantle - 1961 Topps MVP #475",
+    "Price": 999.99,
+    "Purchase Date": "2026-08-03",
+    "SKU": "100495",
+    "Grade": "6"
   },
   {
-    "id": "CARD-0043",
-    "description": "Trevor Lawrence - 2021 Phoenix Fire Burst",
-    "price": 28.04
+    "QR_ID": "CARD-0043",
+    "Card": "Nolan Ryan - 2023 Topps Luminaries Masters Mound Auto /15",
+    "Price": 999.99,
+    "Purchase Date": "2026-06-20",
+    "SKU": "100570",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0044",
-    "description": "Wyatt Langford - 2023 Bowman Chrome Draft #BDC106",
-    "price": 42.69
+    "QR_ID": "CARD-0044",
+    "Card": "Paul Skenes - 2025 Topps Pristine Purple /99 #157",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-26",
+    "SKU": "100071.11",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0045",
-    "description": "Wyatt Langford - 2023 Bowman Draft Chrome Auto Blue Wave /150",
-    "price": 680.97
+    "QR_ID": "CARD-0045",
+    "Card": "Paulino Santana - 2024 Bowman Chrome Orange Refractor Auto /25",
+    "Price": 999.99,
+    "Purchase Date": "2025-12-30",
+    "SKU": "100025",
+    "Grade": "9"
   },
   {
-    "id": "CARD-0046",
-    "description": "Wyatt Langford - 2024 Topps Finest Auto Orange /25",
-    "price": 550.0
+    "QR_ID": "CARD-0046",
+    "Card": "Ripken Reyes - 2021 Bowman Prospects Auto #PAPR-RR",
+    "Price": 999.99,
+    "Purchase Date": "2025-12-18",
+    "SKU": "100015",
+    "Grade": "9.5"
   },
   {
-    "id": "CARD-0047",
-    "description": "Yoshinobu Yamamoto - 2024 Bowman Base #36",
-    "price": 3.72
+    "QR_ID": "CARD-0047",
+    "Card": "Roman Anthony - 2026 Topps Silver Pack Chrome 1991 #91C-60",
+    "Price": 999.99,
+    "Purchase Date": "2026-03-05",
+    "SKU": "100029.91",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0048",
-    "description": "Shohei Ohtani - 2018 Bowman High Tek Ocean Blue Tidal",
-    "price": 5974.0
+    "QR_ID": "CARD-0048",
+    "Card": "Ronald Acuna - 2018 Panini Cyber Monday Rapture /25",
+    "Price": 999.99,
+    "Purchase Date": "2026-06-20",
+    "SKU": "100100",
+    "Grade": "9"
   },
   {
-    "id": "CARD-0049",
-    "description": "Luka Doncic - 2018 Panini Donruss Optic the Rookies",
-    "price": 104.16
+    "QR_ID": "CARD-0049",
+    "Card": "Samuel Basallo - 2024 Bowman Sterling Auto #PA-SB",
+    "Price": 999.99,
+    "Purchase Date": "2026-01-25",
+    "SKU": "100063.5",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0050",
-    "description": "Jac Caglianone - 2025 Topps Now Call Up",
-    "price": 25.0
+    "QR_ID": "CARD-0050",
+    "Card": "Sebastian Walcott - 2023 Bowman Chrome Sapphire #189",
+    "Price": 999.99,
+    "Purchase Date": "2026-08-03",
+    "SKU": "100116.5",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0051",
-    "description": "Drake Maye - 2024 Prizm Emergent Green Ice",
-    "price": 95.0
+    "QR_ID": "CARD-0051",
+    "Card": "Sebastian Walcott - 2024 Bowman Sterling",
+    "Price": 999.99,
+    "Purchase Date": "2026-01-03",
+    "SKU": "100150",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0052",
-    "description": "Drake Maye - 2024 Donruss The Rookies",
-    "price": 70.0
+    "QR_ID": "CARD-0052",
+    "Card": "Shohei Ohtani - 2018 Bowman #49",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-03",
+    "SKU": "100093.95",
+    "Grade": "10"
   },
   {
-    "id": "CARD-0053",
-    "description": "Shohei Ohtani - 2018 Topps Fire Flamethrowers Gold Minted",
-    "price": 1500.0
+    "QR_ID": "CARD-0053",
+    "Card": "Shohei Ohtani - 2018 Topps 1983 Topps #83-1",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-03",
+    "SKU": "100157.02",
+    "Grade": "10"
+  },
+  {
+    "QR_ID": "CARD-0054",
+    "Card": "Shohei Ohtani - 2018 Topps Chrome Pitching #150",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-03",
+    "SKU": "100289.95",
+    "Grade": "10"
+  },
+  {
+    "QR_ID": "CARD-0055",
+    "Card": "Shohei Ohtani - 2018 Topps Chrome Pitching Refractor #150",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-03",
+    "SKU": "100579.67",
+    "Grade": "10"
+  },
+  {
+    "QR_ID": "CARD-0056",
+    "Card": "Shohei Ohtani - 2018 Topps Fire Flamethrowers Gold Minted",
+    "Price": 999.99,
+    "Purchase Date": "2026-07-24",
+    "SKU": "101500",
+    "Grade": "9"
+  },
+  {
+    "QR_ID": "CARD-0057",
+    "Card": "Shohei Ohtani - 2018 Topps Gallery Wood #116",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-03",
+    "SKU": "100182.02",
+    "Grade": "10"
+  },
+  {
+    "QR_ID": "CARD-0058",
+    "Card": "Shohei Ohtani - 2024 Topps Chrome 1989 #89CB-5",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-26",
+    "SKU": "100039.21",
+    "Grade": "10"
+  },
+  {
+    "QR_ID": "CARD-0059",
+    "Card": "Shohei Ohtani - 2024 Topps Chrome Image Variation Horizontal #1",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-26",
+    "SKU": "100169.51",
+    "Grade": "10"
+  },
+  {
+    "QR_ID": "CARD-0060",
+    "Card": "Shohei Ohtani - 2026 Topps Profiles #1",
+    "Price": 999.99,
+    "Purchase Date": "2026-03-05",
+    "SKU": "100029.91",
+    "Grade": "10"
+  },
+  {
+    "QR_ID": "CARD-0061",
+    "Card": "Tom Brady - 2000 Bowman Chrome #236",
+    "Price": 999.99,
+    "Purchase Date": "2026-07-19",
+    "SKU": "105200",
+    "Grade": "8"
+  },
+  {
+    "QR_ID": "CARD-0062",
+    "Card": "Trevor Lawrence - 2021 Phoenix Fire Burst",
+    "Price": 999.99,
+    "Purchase Date": "2026-06-20",
+    "SKU": "100028.04",
+    "Grade": "9"
+  },
+  {
+    "QR_ID": "CARD-0063",
+    "Card": "Wyatt Langford - 2023 Bowman Chrome Draft #BDC106",
+    "Price": 999.99,
+    "Purchase Date": "2026-03-31",
+    "SKU": "100042.69",
+    "Grade": "10"
+  },
+  {
+    "QR_ID": "CARD-0064",
+    "Card": "Wyatt Langford - 2023 Bowman Draft Chrome Auto Blue Wave /150",
+    "Price": 999.99,
+    "Purchase Date": "2026-06-09",
+    "SKU": "100680.97",
+    "Grade": "10"
+  },
+  {
+    "QR_ID": "CARD-0065",
+    "Card": "Wyatt Langford - 2024 Bowmans Best Auto /50 #B24-WL",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-17",
+    "SKU": "100138.91",
+    "Grade": "10"
+  },
+  {
+    "QR_ID": "CARD-0066",
+    "Card": "Wyatt Langford - 2024 Topps Chrome Auto Ray Wave /150 #AC-WL",
+    "Price": 999.99,
+    "Purchase Date": "2026-02-17",
+    "SKU": "100178.91",
+    "Grade": "9"
+  },
+  {
+    "QR_ID": "CARD-0067",
+    "Card": "Wyatt Langford - 2024 Topps Finest Auto Orange /25",
+    "Price": 999.99,
+    "Purchase Date": "2026-03-23",
+    "SKU": "100550",
+    "Grade": "10"
+  },
+  {
+    "QR_ID": "CARD-0068",
+    "Card": "Yoshinobu Yamamoto - 2024 Bowman Base #36",
+    "Price": 999.99,
+    "Purchase Date": "2026-01-25",
+    "SKU": "100029.08",
+    "Grade": "8"
+  },
+  {
+    "QR_ID": "CARD-0069",
+    "Card": "Yoshinobu Yamamoto - 2024 Topps Chrome Prism #18",
+    "Price": 999.99,
+    "Purchase Date": "2026-03-05",
+    "SKU": "100049.24",
+    "Grade": "9"
   }
 ];
 
@@ -559,21 +881,11 @@
     const lookupInput = document.getElementById("lookupInput");
 
     const cardMap = new Map(
-      cards.map(card => [String(card.id).trim().toUpperCase(), card])
+      cards.map(card => [String(card["QR_ID"]).trim().toUpperCase(), card])
     );
 
-    function formatPrice(price) {
-      const number = Number(price);
-      return Number.isFinite(number)
-        ? number.toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD"
-          })
-        : price;
-    }
-
-    function escapeHtml(value) {
-      return String(value)
+    function esc(value) {
+      return String(value ?? "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -581,50 +893,85 @@
         .replaceAll("'", "&#039;");
     }
 
+    function money(value) {
+      const n = Number(value);
+      return Number.isFinite(n)
+        ? n.toLocaleString("en-US", { style:"currency", currency:"USD" })
+        : esc(value);
+    }
+
+    function formatDate(value) {
+      if (!value) return "";
+      const parts = String(value).split("-");
+      if (parts.length === 3) {
+        return `${Number(parts[1])}/${Number(parts[2])}/${parts[0]}`;
+      }
+      return value;
+    }
+
     function normalizeId(value) {
       return String(value || "").trim().toUpperCase();
     }
 
-    function showCard(cardId) {
+    function showCard(id) {
       detailView.classList.remove("hidden");
       inventoryView.classList.add("hidden");
 
-      const normalizedId = normalizeId(cardId);
-      const card = cardMap.get(normalizedId);
+      const normalized = normalizeId(id);
+      const card = cardMap.get(normalized);
 
       if (!card) {
-        detailContent.innerHTML = `
-          <p class="error">Card ID ${escapeHtml(normalizedId)} was not found.</p>
-          <p>Please check the ID and try again.</p>
-        `;
-        lookupInput.value = normalizedId;
+        detailContent.innerHTML =
+          `<p class="error">Card ID ${esc(normalized)} was not found.</p>`;
+        lookupInput.value = normalized;
         return;
       }
 
-      document.title = `${card.description} | 34 Express Sports Cards`;
+      document.title = `${card["Card"]} | 34 Express Sports Cards`;
 
       detailContent.innerHTML = `
-        <div class="card-id">Card ID: ${escapeHtml(card.id)}</div>
-        <h2 class="card-description">${escapeHtml(card.description)}</h2>
-        <div class="price-label">Current Price</div>
-        <p class="price">${formatPrice(card.price)}</p>
-        <p class="availability">Available</p>
+        <div class="card-heading">
+          <div class="card-id">${esc(card["QR_ID"])}</div>
+          <h2 class="card-description">${esc(card["Card"])}</h2>
+          <div class="price-label">Current Price</div>
+          <div class="price">${money(card["Price"])}</div>
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-box">
+            <div class="detail-label">Purchase Date</div>
+            <div class="detail-value">${esc(formatDate(card["Purchase Date"]))}</div>
+          </div>
+
+          <div class="detail-box">
+            <div class="detail-label">SKU</div>
+            <div class="detail-value">${esc(card["SKU"])}</div>
+          </div>
+
+          <div class="detail-box">
+            <div class="detail-label">Grade</div>
+            <div class="detail-value">${esc(card["Grade"])}</div>
+          </div>
+        </div>
       `;
 
-      lookupInput.value = normalizedId;
+      lookupInput.value = normalized;
     }
 
-    function buildInventory(filteredCards = cards) {
-      inventoryBody.innerHTML = filteredCards.map(card => {
-        const cardUrl =
-          `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(card.id)}`;
+    function buildInventory(list = cards) {
+      inventoryBody.innerHTML = list.map(card => {
+        const url =
+          `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(card["QR_ID"])}`;
 
         return `
           <tr>
-            <td>${escapeHtml(card.id)}</td>
-            <td>${escapeHtml(card.description)}</td>
-            <td class="price-cell">${formatPrice(card.price)}</td>
-            <td><a href="${cardUrl}">View card</a></td>
+            <td>${esc(card["QR_ID"])}</td>
+            <td>${esc(card["Card"])}</td>
+            <td class="price-cell">${money(card["Price"])}</td>
+            <td>${esc(formatDate(card["Purchase Date"]))}</td>
+            <td>${esc(card["SKU"])}</td>
+            <td class="grade-cell">${esc(card["Grade"])}</td>
+            <td><a href="${url}">View</a></td>
           </tr>
         `;
       }).join("");
@@ -636,15 +983,17 @@
       buildInventory();
     }
 
-    lookupForm.addEventListener("submit", event => {
-      event.preventDefault();
+    lookupForm.addEventListener("submit", e => {
+      e.preventDefault();
       const id = normalizeId(lookupInput.value);
       if (!id) return;
 
-      const newUrl =
-        `${window.location.pathname}?id=${encodeURIComponent(id)}`;
+      history.pushState(
+        {},
+        "",
+        `${location.pathname}?id=${encodeURIComponent(id)}`
+      );
 
-      window.history.pushState({}, "", newUrl);
       showCard(id);
     });
 
@@ -652,20 +1001,20 @@
       const term = inventorySearch.value.trim().toLowerCase();
 
       const filtered = cards.filter(card =>
-        card.id.toLowerCase().includes(term) ||
-        card.description.toLowerCase().includes(term) ||
-        String(card.price).toLowerCase().includes(term)
+        Object.values(card).some(value =>
+          String(value ?? "").toLowerCase().includes(term)
+        )
       );
 
       buildInventory(filtered);
     });
 
     window.addEventListener("popstate", () => {
-      const id = new URLSearchParams(window.location.search).get("id");
+      const id = new URLSearchParams(location.search).get("id");
       id ? showCard(id) : showInventory();
     });
 
-    const requestedId = new URLSearchParams(window.location.search).get("id");
+    const requestedId = new URLSearchParams(location.search).get("id");
     requestedId ? showCard(requestedId) : showInventory();
   </script>
 </body>
